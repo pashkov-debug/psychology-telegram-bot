@@ -70,7 +70,7 @@ async def cb_free(call: CallbackQuery):
     if not url:
         await call.message.edit_text("Ссылка не настроена (SITE_FREE_URL).", reply_markup=back_to_menu())
     else:
-        await call.message.edit_text("Бесплатные материалы — по ссылке:", reply_markup=link_button("Открыть", url))
+        await call.message.edit_text("Бесплатные материалы (тесты, книги) — по ссылке:", reply_markup=link_button("Открыть", url))
     await call.answer()
 
 
@@ -224,3 +224,4 @@ async def booking_send(call: CallbackQuery, state: FSMContext):
         reply_markup=back_to_menu()
     )
     await state.clear()
+
