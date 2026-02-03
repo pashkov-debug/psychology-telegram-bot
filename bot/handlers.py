@@ -344,7 +344,7 @@ async def cb_about(call: CallbackQuery):
     if not url:
         await call.message.edit_text("Ссылка не настроена (SITE_ABOUT_URL).", reply_markup=back_to_menu())
     else:
-        await call.message.edit_text("Обо мне:\nМедицинский психолог\nСистемный семейный терапевт\nОкончил РНИМУ (2й медицинский) в 2015г\nБолее 10 доп образований\nОзнакомится с документами можно по ссылке по ссылке:", reply_markup=link_button("Открыть", url))
+        await call.message.edit_text("Обо мне:\nМедицинский психолог\nСистемный семейный терапевт\nОкончил РНИМУ (2й медицинский) в 2015г\nБолее 10 доп образований\nБолее 10 лет опыта работы\nОзнакомится с документами можно по ссылке:", reply_markup=link_button("Открыть", url))
     await call.answer()
 
 
