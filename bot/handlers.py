@@ -90,7 +90,7 @@ async def cb_contact(call: CallbackQuery):
     if not url:
         await call.message.edit_text("Ссылка не настроена (SITE_CONTACT_URL).", reply_markup=back_to_menu())
     else:
-        await call.message.edit_text("Контакты — по ссылке:", reply_markup=link_button("Открыть", url))
+        await call.message.edit_text("Контакты:\n +79251421401\npashkovnpc@gmail.com\n Или по ссылке:", reply_markup=link_button("Открыть", url))
     await call.answer()
 
 
@@ -224,4 +224,5 @@ async def booking_send(call: CallbackQuery, state: FSMContext):
         reply_markup=back_to_menu()
     )
     await state.clear()
+
 
