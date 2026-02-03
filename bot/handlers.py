@@ -18,6 +18,37 @@ router = Router()
 
 PHONE_RE = re.compile(r"^\+?[0-9][0-9\s\-\(\)]{7,20}$")
 
+from datetime import datetime, timezone
+
+def _to_utc_dt(v):
+    if v is None:
+        return None
+
+    if isinstance(v, datetime):
+        dt = v
+    elif isinstance(v, (int, float)):
+        dt = datetime.fromtimestamp(v, tz=timezone.utc)
+    elif isinstance(v, str):
+        s = v.strip().replace("Z", "+00:00")
+        try:
+            dt = datetime.fromisoformat(s)
+        except ValueError:
+            # fallback под частые форматы SQLite
+            for fmt in ("%Y-%m-%d %H:%M:%S%z", "%Y-%m-%d %H:%M:%S"):
+                try:
+                    dt = datetime.strptime(s, fmt)
+                    break
+                except ValueError:
+                    dt = None
+            if dt is None:
+                return None
+    else:
+        return None
+
+    if dt.tzinfo is None:
+        dt = dt.replace(tzinfo=timezone.utc)
+    return dt.astimezone(timezone.utc)
+
 
 def normalize_phone(raw: str) -> str:
     return re.sub(r"\s+", " ", raw).strip()
