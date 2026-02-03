@@ -3,6 +3,7 @@ from aiohttp import web
 
 from aiogram import Bot, Dispatcher
 from aiogram.enums import ParseMode
+from aiogram.client.default import DefaultBotProperties
 from aiogram.fsm.storage.memory import MemoryStorage
 from aiogram.webhook.aiohttp_server import SimpleRequestHandler, setup_application
 
@@ -43,7 +44,7 @@ async def on_shutdown(bot: Bot):
 
 def create_app() -> web.Application:
     token = must_getenv("BOT_TOKEN")
-    bot = Bot(token=token, parse_mode=ParseMode.HTML)
+    bot = Bot(token=token, default=DefaultBotProperties(parse_mode=ParseMode.HTML))
 
     # DB + внешний API
     db_path = os.getenv("DB_PATH", "data.db")
