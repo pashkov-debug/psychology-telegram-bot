@@ -3,6 +3,7 @@ import os
 
 from aiogram import Bot, Dispatcher
 from aiogram.enums import ParseMode
+from aiogram.client.default import DefaultBotProperties
 from aiogram.fsm.storage.memory import MemoryStorage
 
 from bot.handlers import router
@@ -49,7 +50,7 @@ async def main() -> None:
         osf_provider=osf_provider,
     )
 
-    bot = Bot(token=token, parse_mode=ParseMode.HTML)
+    bot = Bot(token=token, default=DefaultBotProperties(parse_mode=ParseMode.HTML))
 
     # На Render (polling) важно снять webhook, иначе getUpdates не работает
     try:
