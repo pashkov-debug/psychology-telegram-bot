@@ -80,7 +80,7 @@ async def cb_about(call: CallbackQuery):
     if not url:
         await call.message.edit_text("Ссылка не настроена (SITE_ABOUT_URL).", reply_markup=back_to_menu())
     else:
-        await call.message.edit_text("Обо мне — по ссылке:", reply_markup=link_button("Открыть", url))
+        await call.message.edit_text("Обо мне:\nМедицинский психолог\nОкончил РНИМУ(2й медицинский университет) в 2015г\nБолее 10 сертификатов доп образований\nОпыт работы более 10 лет.\nПосмотреть документы и все сертификаты можно по ссылке:", reply_markup=link_button("Открыть", url))
     await call.answer()
 
 
@@ -90,7 +90,7 @@ async def cb_contact(call: CallbackQuery):
     if not url:
         await call.message.edit_text("Ссылка не настроена (SITE_CONTACT_URL).", reply_markup=back_to_menu())
     else:
-        await call.message.edit_text("Контакты:\n +79251421401\npashkovnpc@gmail.com\n Или по ссылке:", reply_markup=link_button("Открыть", url))
+        await call.message.edit_text("Контакты:\n +79251421401\npashkovnpc@gmail.com\n\nИли по ссылке:", reply_markup=link_button("Открыть", url))
     await call.answer()
 
 
@@ -160,7 +160,7 @@ async def booking_request_text(message: Message, state: FSMContext):
         "✅ <b>Проверьте заявку</b>\n\n"
         f"<b>Телефон:</b> <code>{data['phone']}</code>\n"
         f"<b>Запрос:</b> {data['request_text']}\n\n"
-        "Отправить вам заявку?"
+        "Отправить заявку?"
     )
     await state.set_state(BookingStates.confirm)
     await message.answer(preview, reply_markup=ReplyKeyboardRemove())
@@ -212,7 +212,7 @@ async def booking_send(call: CallbackQuery, state: FSMContext):
         await call.bot.send_message(chat_id=chat_id, text=admin_text)
     except Exception:
         await call.message.edit_text(
-            "⚠️ Не удалось отправить админу сообщение.\n"
+            "⚠️ Не удалось отправить сообщение.\n"
             "Проверьте, что вы (админ) нажали /start у бота и ADMIN_CHAT_ID верный.",
             reply_markup=back_to_menu()
         )
@@ -220,9 +220,10 @@ async def booking_send(call: CallbackQuery, state: FSMContext):
         return
 
     await call.message.edit_text(
-        "✅ Заявка отправлена. Я свяжусь с вами по указанному номеру.",
+        "✅ Заявка отправлена. С вами свяжутся по указанному номеру.",
         reply_markup=back_to_menu()
     )
     await state.clear()
+
 
 
