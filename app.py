@@ -1,11 +1,13 @@
+import asyncio
+import logging
 import os
-from aiohttp import web
+
 from dotenv import load_dotenv
 
 from aiogram import Bot, Dispatcher
+from aiogram.client.default import DefaultBotProperties
 from aiogram.enums import ParseMode
 from aiogram.fsm.storage.memory import MemoryStorage
-from aiogram.webhook.aiohttp_server import SimpleRequestHandler, setup_application
 
 from bot.handlers import router
 
@@ -17,65 +19,41 @@ def must_getenv(name: str) -> str:
     return v
 
 
-async def on_startup(bot: Bot):
-    public_base = os.getenv("PUBLIC_BASE_URL")
-    secret = must_getenv("WEBHOOK_SECRET")
-
-    if public_base:
-        webhook_url = f"{public_base.rstrip('/')}/webhook/{secret}"
-        await bot.set_webhook(
-            url=webhook_url,
-            secret_token=secret,
-            drop_pending_updates=True,
-        )
-        print(f"[startup] webhook set: {webhook_url}")
-    else:
-        print("[startup] PUBLIC_BASE_URL not set -> webhook will NOT be set")
-
-
-async def on_shutdown(bot: Bot):
-    try:
-        await bot.delete_webhook(drop_pending_updates=True)
-    except Exception:
-        pass
-
-
-def create_app() -> web.Application:
+async def main() -> None:
     load_dotenv()
 
+    # Логи в stdout — Render их подхватит
+    logging.basicConfig(
+        level=logging.INFO,
+        format="%(asctime)s | %(levelname)s | %(name)s | %(message)s",
+    )
+    log = logging.getLogger("worker")
+
     token = must_getenv("BOT_TOKEN")
-    bot = Bot(token=token, parse_mode=ParseMode.HTML)
+
+    bot = Bot(
+        token=token,
+        default=DefaultBotProperties(parse_mode=ParseMode.HTML),
+    )
 
     storage = MemoryStorage()
     dp = Dispatcher(storage=storage)
     dp.include_router(router)
 
-    app = web.Application()
-    secret = must_getenv("WEBHOOK_SECRET")
+    # Критично: если раньше был webhook — снимаем его, иначе polling не увидит апдейты
+    try:
+        await bot.delete_webhook(drop_pending_updates=True)
+        log.info("Webhook disabled (delete_webhook ok). Using long polling.")
+    except Exception:
+        log.exception("Failed to delete webhook (continuing).")
 
-    SimpleRequestHandler(dispatcher=dp, bot=bot, secret_token=secret).register(
-        app, path=f"/webhook/{secret}"
-    )
-
-    async def health(_):
-        return web.json_response({"ok": True})
-
-    app.router.add_get("/health", health)
-
-    setup_application(app, dp, bot=bot)
-
-    async def _startup(_app: web.Application):
-        await on_startup(bot)
-
-    async def _shutdown(_app: web.Application):
-        await on_shutdown(bot)
+    try:
+        # allowed_updates — только используемые типы апдейтов (меньше трафик)
+        await dp.start_polling(bot, allowed_updates=dp.resolve_used_update_types())
+    finally:
         await bot.session.close()
-
-    app.on_startup.append(_startup)
-    app.on_shutdown.append(_shutdown)
-    return app
+        log.info("Bot session closed.")
 
 
 if __name__ == "__main__":
-    port = int(os.getenv("PORT", "10000"))
-    web.run_app(create_app(), host="0.0.0.0", port=port)
+    asyncio.run(main())
