@@ -90,7 +90,8 @@ async def _send_history(target: Message, tg_user_id: int) -> None:
 
     lines = ["🕘 <b>Последние запросы</b>"]
     for i, r in enumerate(rows, 1):
-        ts = r["created_at"].astimezone(timezone.utc).strftime("%Y-%m-%d %H:%M UTC")
+        dt = _to_utc_dt(r.get("created_at"))
+        ts = dt.strftime("%Y-%m-%d %H:%M UTC") if dt else "—"
         cmd = html_escape(r["command"] or "")
         q = html_escape(_truncate(r["query"] or "", 120))
         title = html_escape(_truncate(r["result_title"] or "", 160))
