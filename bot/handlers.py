@@ -302,7 +302,7 @@ async def cb_free(call: CallbackQuery):
     if not url:
         await call.message.edit_text("Ссылка не настроена (SITE_FREE_URL).", reply_markup=back_to_menu())
     else:
-        await call.message.edit_text("Бесплатные материалы — по ссылке:", reply_markup=link_button("Открыть", url))
+        await call.message.edit_text("Бесплатные материалы (онлайн тесты, книги) — по ссылке:", reply_markup=link_button("Открыть", url))
     await call.answer()
 
 
@@ -312,7 +312,7 @@ async def cb_about(call: CallbackQuery):
     if not url:
         await call.message.edit_text("Ссылка не настроена (SITE_ABOUT_URL).", reply_markup=back_to_menu())
     else:
-        await call.message.edit_text("Обо мне — по ссылке:", reply_markup=link_button("Открыть", url))
+        await call.message.edit_text("Обо мне:\nМедицинский психолог\nСистемный семейный терапевт\nОкончил РНИМУ (2й медицинский) в 2015г\nБолее 10 доп образований\nОзнакомится с документами можно по ссылке по ссылке:", reply_markup=link_button("Открыть", url))
     await call.answer()
 
 
@@ -322,7 +322,7 @@ async def cb_contact(call: CallbackQuery):
     if not url:
         await call.message.edit_text("Ссылка не настроена (SITE_CONTACT_URL).", reply_markup=back_to_menu())
     else:
-        await call.message.edit_text("Контакты — по ссылке:", reply_markup=link_button("Открыть", url))
+        await call.message.edit_text("Контакты:\n+79251421401\npashkovnpc@gmail.com\n Или по ссылке:", reply_markup=link_button("Открыть", url))
     await call.answer()
 
 
@@ -395,7 +395,7 @@ async def booking_request_text(message: Message, state: FSMContext):
         "✅ <b>Проверьте заявку</b>\n\n"
         f"<b>Телефон:</b> <code>{html_escape(data['phone'])}</code>\n"
         f"<b>Запрос:</b> {html_escape(data['request_text'])}\n\n"
-        "Отправить вам заявку?"
+        "Отправить заявку?"
     )
     await state.set_state(BookingStates.confirm)
     await message.answer(preview, reply_markup=ReplyKeyboardRemove())
@@ -457,7 +457,7 @@ async def booking_send(call: CallbackQuery, state: FSMContext):
         return
 
     await call.message.edit_text(
-        "✅ Заявка отправлена. Я свяжусь с вами по указанному номеру.",
+        "✅ Заявка отправлена. Специалист свяжется с вами по указанному номеру.",
         reply_markup=back_to_menu()
     )
     await state.clear()
