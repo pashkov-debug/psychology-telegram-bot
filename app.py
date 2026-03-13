@@ -34,10 +34,7 @@ async def on_startup(bot: Bot):
 
 
 async def on_shutdown(bot: Bot):
-    try:
-        await bot.delete_webhook(drop_pending_updates=True)
-    except Exception:
-        pass
+    pass
 
 
 def create_app() -> web.Application:
